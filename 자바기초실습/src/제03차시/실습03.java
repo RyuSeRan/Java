@@ -6,7 +6,7 @@ public class 실습03 {
 		int a=0,b=0;
 		a++; b++;
 		a+=15; b+=a;
-		a-=1; b*=a;
+		a-=1; b*=a; 
 		a/=2; b%=3;
 		a&=2; b|=a;
 		System.out.println("a="+a+", b="+b);

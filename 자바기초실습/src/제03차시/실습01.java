@@ -4,7 +4,7 @@ public class 실습01 {
 
 	public static void main(String[] args) {
 		byte a1=-128,a2=127,a3=037,a4=0x1f,a5=0b11111;
-		short b1=-32748,b2=32767;
+		short b1=-32748,b2=32767; 
 		int c1=-2147483648,c2=2147483647;
 		long d1=2147483648L,d2=1L<<63,d3=(1L<<63)-1;
 		

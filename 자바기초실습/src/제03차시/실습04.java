@@ -23,7 +23,7 @@ public class 실습04 {
 		
 		for(int i=1;i<=10;i++) {
 			System.out.println(i);
-		}
+		} 
 		
 		int i=1;
 		while(i<=10) {
