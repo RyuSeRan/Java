@@ -18,7 +18,7 @@ public class 실습04 {
 			System.out.println(m + "월의 마지막 날은 28일입니다.");
 			break;
 		default:
-			System.out.println(m + "월의 마지막 날으 30일입니다.");
+			System.out.println(m + "월의 마지막 날은 30일입니다.");
 		}
 		
 		for(int i=1;i<=10;i++) {
