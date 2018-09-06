@@ -31,7 +31,7 @@ public class 실습03 {
 		System.out.println(~0b00000110);
 		System.out.println(0b00010100 >> 2);
 		System.out.println(0b00010100 << 2);
-		
+		 
 		System.out.println(0b10000000000000000000000000010100 >> 2);
 		System.out.println(0b10000000000000000000000000010100 >>> 2);
 		
