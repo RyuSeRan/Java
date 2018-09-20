@@ -16,7 +16,9 @@ public class 문제11 {
 		int x2=sc.nextInt();
 		int y2=sc.nextInt();
 		int r2=sc.nextInt();
-		
+		int A=(int) (Math.pow((x1-x2), 2)+Math.pow((y1-y2), 2));
+		int B=(int) Math.pow((r1-r2), 2);
+		System.out.println(B<=A?"겹침":"겹치지않음");
 	}
 
 }
