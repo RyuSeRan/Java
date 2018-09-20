@@ -2,6 +2,7 @@ package 제05차시;
 
 public class Test2 {
 	int a = 1, b = 2, c = 3;
+	int d=1234;
 
 	Test2() {
 		// 분석(1)
@@ -10,7 +11,7 @@ public class Test2 {
 
 		// 분석(2)
 		System.out.print("c : ");
-		for (int b = 1; b < 5; b++) {
+		for (int b = 1; b <= 5; b++) {
 			int c = 5;
 			System.out.print(c + " ");
 			a = a + b;
