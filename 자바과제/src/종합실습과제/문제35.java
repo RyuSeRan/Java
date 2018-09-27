@@ -11,9 +11,9 @@ public class 문제35 {
 		int su1=1,su2=0,su=0;
 		System.out.print("수열 : ");
 		for (int i = 1; i < n; i++) {
-			su=su1+su;
+			su=su1+su2;
 			su2=su1;
-			su2=su;
+			su1=su;
 			System.out.print(su+" ");
 		}
 		System.out.println("\n"+n+"번째 수 : "+su);
