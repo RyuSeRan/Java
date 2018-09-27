@@ -17,7 +17,6 @@ public class 문제43 {
 			for (int j = 2; j < i; j++) {
 				if(nums[i]%j==0) {
 					nums[i]=0;
-					break;
 				}
 			}
 		}
