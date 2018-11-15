@@ -10,6 +10,9 @@ public class Main {
 		tw.tb=tb;
 		tb.tw=tw;
 		
+		tw.initialize();
+		tw.drawTetrisBoard(2, 3, 0);
+		
 		tw.repaint();
 		tw.revalidate();
 	}

@@ -1,9 +1,10 @@
 package 테트리스;
 
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
-public class TetrisWindow extends JFrame {
+public class TetrisWindow extends JFrame implements ActionListener {
 	TetrisBoard tb;
 	
 	String[] 버튼제목 = { "게임시작", "블록교체", "블록회전", "게임종료" };
@@ -20,7 +21,7 @@ public class TetrisWindow extends JFrame {
 	public TetrisWindow() {
 		this.setTitle("혜리의 테트리스");
 		this.setSize(500, 730);
-		this.getContentPane().setBackground(new Color(0x9FF3FF));
+		this.getContentPane().setBackground(new Color(0xFFC892));
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setVisible(true);
@@ -44,6 +45,11 @@ public class TetrisWindow extends JFrame {
 		기록레이블.setOpaque(true);
 		firstPanel.add(기록레이블);
 		
+		//명령버튼에 이벤트 처리
+		for (int i = 0; i < 명령버튼.length; i++) {
+			this.명령버튼[i].addActionListener(this);
+		}
+		
 		//화면 그래픽 갱신
 		this.repaint();
 		this.revalidate();
@@ -51,7 +57,7 @@ public class TetrisWindow extends JFrame {
 
 	void initialize() {
 		//7개 블록조각에 넣을 색상을 정한다.
-		색상=new int[] { 0xFFD3FF, 0x9AD3FF, 0xFF999B, 0x99FFAA, 0xFCFF99, 0xC499FF, 0x99FCFF };
+		색상=new int[] { 0xFFD3FF, 0xFFC499, 0xFF999B, 0x99FFAA, 0xFCFF99, 0xC499FF, 0x99FCFF };
 		
 		//7개 블록조각을 만든다.
 		this.모든블록=new int[][][] {
@@ -112,6 +118,36 @@ public class TetrisWindow extends JFrame {
 		this.현재블록등장위치x=0;
 		this.현재블록등장위치y=0;
 		
+	}
+	
+	void drawTetrisBoard(int 블록번호, int x, int y) {
+		this.블록번호=블록번호;
+		this.현재블록=this.모든블록[this.블록번호].clone();
+		this.현재블록등장위치x=x;
+		this.현재블록등장위치y=y;
+		
+		tb.repaint();
+		tb.revalidate();
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		JButton jb=(JButton)e.getSource();
+		if (jb.getText().equals("게임시작")) {
+			;
+		}
+		else if (jb.getText().equals("블록교체")) {
+			this.블록번호=(this.블록번호+1)%7;
+			this.현재블록=this.모든블록[this.블록번호].clone();
+			this.tb.repaint();
+			this.tb.revalidate();
+		}
+		else if (jb.getText().equals("블록회전")) {
+			;
+		}
+		else if (jb.getText().equals("게임종료")) {
+			;
+		}
 	}
 
 
