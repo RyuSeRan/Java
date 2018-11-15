@@ -1,4 +1,4 @@
-package 제08차시;
+package 제13차시;
 
 public class Student {
 	String name;
@@ -6,4 +6,8 @@ public class Student {
 	int ban;
 	int number;
 	String telephone;
+	public Student() {}
+	public Student(String n) {
+		name=n;
+	}	
 }
