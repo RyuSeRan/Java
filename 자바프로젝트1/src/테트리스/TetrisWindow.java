@@ -109,7 +109,8 @@ public class TetrisWindow extends JFrame {
 		//게임을 위한 변수 초기화한다.
 		this.블록번호=0;
 		this.현재블록=모든블록[블록번호].clone();
-		
+		this.현재블록등장위치x=0;
+		this.현재블록등장위치y=0;
 		
 	}
 
