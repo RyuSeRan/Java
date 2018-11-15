@@ -14,6 +14,7 @@ public class TetrisWindow extends JFrame {
 	int[] 색상;
 	int[][] 테트리스맵=new int[20][10];		//		 ┌	  블록       ┐
 	int[][][] 모든블록;					//[블록갯수][가로][세로]
+	int[][] 현재블록;
 	int 블록번호, 현재블록등장위치x, 현재블록등장위치y;
 	
 	public TetrisWindow() {
@@ -99,10 +100,15 @@ public class TetrisWindow extends JFrame {
 		};
 		
 		//테트리스 게임판을 초기화한다.
-		
+		for (int i = 0; i < 20; i++) {
+			for (int j = 0; j < 10; j++) {
+				this.테트리스맵[i][j]=0;
+			}
+		}
 		
 		//게임을 위한 변수 초기화한다.
-		
+		this.블록번호=0;
+		this.현재블록=모든블록[블록번호].clone();
 		
 		
 	}
