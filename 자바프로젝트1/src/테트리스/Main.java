@@ -1,5 +1,7 @@
 package 테트리스;
 
+import java.util.*;
+
 public class Main {
 
 	public static void main(String[] args) {
@@ -10,8 +12,9 @@ public class Main {
 		tw.tb=tb;
 		tb.tw=tw;
 		
+		Random r=new Random();
 		tw.initialize();
-		tw.drawTetrisBoard(2, 3, 0);
+		tw.drawTetrisBoard(r.nextInt(7), 3, 0);
 		
 		tw.repaint();
 		tw.revalidate();

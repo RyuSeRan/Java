@@ -2,14 +2,16 @@ package 테트리스;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 import javax.swing.*;
 
-public class TetrisWindow extends JFrame implements ActionListener {
+public class TetrisWindow extends JFrame implements ActionListener, KeyListener {
 	TetrisBoard tb;
 	
 	String[] 버튼제목 = { "게임시작", "블록교체", "블록회전", "게임종료" };
 	JButton[] 명령버튼 = new JButton[4];
 	JLabel 기록레이블;
+	Random r = new Random();
 	
 	//3단계
 	int[] 색상;
@@ -20,7 +22,7 @@ public class TetrisWindow extends JFrame implements ActionListener {
 	
 	public TetrisWindow() {
 		this.setTitle("혜리의 테트리스");
-		this.setSize(500, 730);
+		this.setSize(500, 720);
 		this.getContentPane().setBackground(new Color(0xFFC892));
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -130,25 +132,82 @@ public class TetrisWindow extends JFrame implements ActionListener {
 		tb.revalidate();
 	}
 	
+	void moveTetrisBlock(int x, int y) {
+		this.현재블록등장위치x+=x;
+		this.현재블록등장위치y+=y;
+		if(this.현재블록등장위치x<0)	this.현재블록등장위치x=0;
+		if(this.현재블록등장위치x>6)	this.현재블록등장위치x=6;
+		if(this.현재블록등장위치y>16)	this.현재블록등장위치y=16;
+
+		drawTetrisBoard(this.블록번호, this.현재블록등장위치x, this.현재블록등장위치y);
+	}
+	
+	void rotateTetrisBlock() {
+		//현재블록을 회전한다.
+		int[][] 회전블록  = new int[4][4];
+		for (int i = 0; i < 현재블록.length; i++) {
+			for (int j = 0; j < 현재블록.length; j++) {
+				회전블록[j][현재블록.length-1-i]=현재블록[i][j];
+			}
+		}
+		현재블록=회전블록;
+		
+		drawTetrisBoard(this.블록번호, this.현재블록등장위치x, this.현재블록등장위치y);
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		JButton jb=(JButton)e.getSource();
 		if (jb.getText().equals("게임시작")) {
-			;
+			try {
+				this.removeKeyListener(this);
+			} catch (Exception e1) { }
+			this.addKeyListener(this);
+			this.requestFocus();
 		}
 		else if (jb.getText().equals("블록교체")) {
-			this.블록번호=(this.블록번호+1)%7;
-			this.현재블록=this.모든블록[this.블록번호].clone();
-			this.tb.repaint();
-			this.tb.revalidate();
+			this.블록번호=r.nextInt(7);
+			drawTetrisBoard(this.블록번호, this.현재블록등장위치x, this.현재블록등장위치y);
+			this.requestFocus();
 		}
 		else if (jb.getText().equals("블록회전")) {
-			;
+			rotateTetrisBlock();
+			this.requestFocus();
 		}
 		else if (jb.getText().equals("게임종료")) {
 			;
 		}
 	}
 
+	@Override
+	public void keyPressed(KeyEvent key) {
+		switch (key.getKeyCode()) {
+		case KeyEvent.VK_LEFT:
+			moveTetrisBlock(-1,0);
+			break;
+		case KeyEvent.VK_RIGHT:
+			moveTetrisBlock(1,0);
+			break;
+		case KeyEvent.VK_UP:
+			rotateTetrisBlock();
+			break;
+		case KeyEvent.VK_DOWN:
+			moveTetrisBlock(0,1);
+			break;
+		case KeyEvent.VK_SPACE:
+			
+			break;
+		}
+	}
+	
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		
+	}
+	
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		
+	}
 
 }
