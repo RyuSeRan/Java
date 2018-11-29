@@ -20,6 +20,11 @@ public class TetrisWindow extends JFrame implements ActionListener, KeyListener 
 	int[][] 현재블록;
 	int 블록번호, 현재블록등장위치x, 현재블록등장위치y;
 	
+	//4단계
+	int minX, minY, maxX, maxY;
+	boolean 바닥인가;
+	int score=0;
+	
 	public TetrisWindow() {
 		this.setTitle("혜리의 테트리스");
 		this.setSize(500, 720);
@@ -41,7 +46,7 @@ public class TetrisWindow extends JFrame implements ActionListener, KeyListener 
 			firstPanel.add(명령버튼[i]);
 		}
 		
-		기록레이블=new JLabel("Score", JLabel.CENTER);
+		기록레이블=new JLabel("0점", JLabel.CENTER);
 		기록레이블.setPreferredSize(new Dimension(60, 25));
 		기록레이블.setBackground(new Color(0xADFF9F));
 		기록레이블.setOpaque(true);
@@ -135,24 +140,139 @@ public class TetrisWindow extends JFrame implements ActionListener, KeyListener 
 	void moveTetrisBlock(int x, int y) {
 		this.현재블록등장위치x+=x;
 		this.현재블록등장위치y+=y;
-		if(this.현재블록등장위치x<0)	this.현재블록등장위치x=0;
-		if(this.현재블록등장위치x>6)	this.현재블록등장위치x=6;
-		if(this.현재블록등장위치y>16)	this.현재블록등장위치y=16;
 
-		drawTetrisBoard(this.블록번호, this.현재블록등장위치x, this.현재블록등장위치y);
+		//현재블록의 내부 조각의 범위를 알아낸다.
+		getminXminYmaxXmaxY(현재블록);
+		
+		//현재블록이 테트리스맵의 범위를 벗어나지 않도록 한다.
+		if(haveBlockTrubles(현재블록)==true) {
+			this.현재블록등장위치x-=x;
+			this.현재블록등장위치y-=y;
+		}
+		
+		//바닥인지 검사한다.
+		this.바닥인가=isBottom();
+		
+		tb.repaint();
+		tb.revalidate();
+	}
+	
+	boolean isBottom() {
+		if(this.현재블록등장위치y+this.maxY>=19)	return true;
+		
+		for (int i = maxY; i >= minY; i--) {
+			for (int j = minX; j <= maxX; j++) {
+				if (현재블록[i][j]>0) {
+					if(테트리스맵[현재블록등장위치y+i+1][현재블록등장위치x+j]>0 && 현재블록[i][j]>0) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+	
+	boolean haveBlockTrubles(int[][] 지금블록) {
+		getminXminYmaxXmaxY(지금블록);
+		
+		if(현재블록등장위치x+maxX>9) return true;
+		if(현재블록등장위치x<0) return true;
+		if(현재블록등장위치y+maxY>19) return true;
+		
+		for (int i = minY; i <= maxY; i++) {
+			for (int j = minX; j <= maxX; j++) {
+				if (현재블록[i][j]>0) {
+					if(테트리스맵[현재블록등장위치y+i][현재블록등장위치x+j]>0 && 현재블록[i][j]>0) {
+						return true;
+					}
+				}
+			}
+		}
+
+		
+		return false;
 	}
 	
 	void rotateTetrisBlock() {
 		//현재블록을 회전한다.
 		int[][] 회전블록  = new int[4][4];
-		for (int i = 0; i < 현재블록.length; i++) {
-			for (int j = 0; j < 현재블록.length; j++) {
-				회전블록[j][현재블록.length-1-i]=현재블록[i][j];
+		for (int i = 0; i < 현재블록.length; i++)
+			for (int j = 0; j < 현재블록.length; j++)
+				회전블록[j][(현재블록.length-1)-i]=현재블록[i][j];
+		
+		//블록 내부 조각의 존재 범위를 알아낸다.
+		getminXminYmaxXmaxY(회전블록);
+		
+		//좌측 하단으로 붙인다.
+		int 좌측이동칸수=minX;
+		int 하단이동칸수=3-maxY;
+		for (int i = maxY; i >= minY; i--) {
+			for (int j = minX; j <= maxX; j++) {
+				int 값=회전블록[i][j];
+				회전블록[i][j]=0;
+				회전블록[i+하단이동칸수][j-좌측이동칸수]=값;
 			}
 		}
-		현재블록=회전블록;
 		
-		drawTetrisBoard(this.블록번호, this.현재블록등장위치x, this.현재블록등장위치y);
+		if(haveBlockTrubles(회전블록)==false)
+			현재블록=회전블록;
+		
+		//블록 내부 조각의 존재 범위를 알아낸다.
+		getminXminYmaxXmaxY(회전블록);
+		
+		tb.repaint();
+		tb.revalidate();
+	}
+	
+	void getminXminYmaxXmaxY(int[][] 지금블록) {
+		minX=minY=9999;
+		maxX=maxY=0;
+		for (int i = 0; i < 지금블록.length; i++)
+			for (int j = 0; j < 지금블록.length; j++)
+				if(지금블록[i][j]>0) {
+					minX=Math.min(minX, j);
+					maxX=Math.max(maxX, j);
+					minY=Math.min(minY, i);
+					maxY=Math.max(maxY, i);					
+				}
+	}
+
+	void recordInTetrisMap() {
+		for (int i = 0; i < 현재블록.length; i++) {
+			for (int j = 0; j < 현재블록.length; j++) {
+				if(현재블록[i][j]>0) {
+					테트리스맵[현재블록등장위치y+i][현재블록등장위치x+j]=현재블록[i][j];
+				}
+			}
+		}
+	}
+	
+	void removeFullLines() {
+		for (int i = 19; i >= 0; i--) {
+			//현재 (i)행에 블록의 갯수를 모두 센다.
+			int cnt = 0;
+			for (int j = 0; j < 10; j++) {
+				if(테트리스맵[i][j]>0)	cnt++;
+			}
+			
+			if(cnt<10)	continue;
+			
+			//블록을 제거한다.
+			for (int j = i; j > 0; j--) {
+				for (int k = 0; k < 10; k++) {
+					테트리스맵[j][k]=테트리스맵[j-1][k];
+					테트리스맵[j-1][k]=0;
+				}
+			}
+			
+			//점수를 10점 추가한다.
+			score+=10;
+			this.기록레이블.setText(score+"점");
+		
+			//
+			i++;
+		}
 	}
 	
 	@Override
@@ -195,6 +315,21 @@ public class TetrisWindow extends JFrame implements ActionListener, KeyListener 
 			moveTetrisBlock(0,1);
 			break;
 		case KeyEvent.VK_SPACE:
+			//바닥에 도달할 때까지 내려간다.
+			바닥인가=false;
+			while(바닥인가==false) {
+				moveTetrisBlock(0, 1);
+			}
+			
+			//현재블록을 테트리스맵에 기록한다.
+			recordInTetrisMap();
+			
+			//모두 채워진 줄을 제거한다.
+			removeFullLines();
+			
+			
+			//새로운 블록을 등장시킨다.
+			drawTetrisBoard(r.nextInt(7), 3, 0);
 			
 			break;
 		}
