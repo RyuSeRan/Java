@@ -5,7 +5,7 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 
-public class TetrisWindow extends JFrame implements ActionListener, KeyListener {
+public class TetrisWindow extends JFrame implements ActionListener, KeyListener, Runnable {
 	TetrisBoard tb;
 	
 	String[] 버튼제목 = { "게임시작", "블록교체", "블록회전", "게임종료" };
@@ -19,11 +19,13 @@ public class TetrisWindow extends JFrame implements ActionListener, KeyListener 
 	int[][][] 모든블록;					//[블록갯수][가로][세로]
 	int[][] 현재블록;
 	int 블록번호, 현재블록등장위치x, 현재블록등장위치y;
+	int 현재블록최초위치x, 현재블록최초위치y;
 	
 	//4단계
 	int minX, minY, maxX, maxY;
-	boolean 바닥인가;
+	boolean 바닥인가, 게임중;
 	int score=0;
+	Thread playThread;
 	
 	public TetrisWindow() {
 		this.setTitle("혜리의 테트리스");
@@ -120,10 +122,10 @@ public class TetrisWindow extends JFrame implements ActionListener, KeyListener 
 		}
 		
 		//게임을 위한 변수 초기화한다.
-		this.블록번호=0;
+		this.블록번호=r.nextInt(7);
 		this.현재블록=모든블록[블록번호].clone();
-		this.현재블록등장위치x=0;
-		this.현재블록등장위치y=0;
+		this.현재블록등장위치x=현재블록최초위치x=3;
+		this.현재블록등장위치y=현재블록최초위치y=0;
 		
 	}
 	
@@ -279,9 +281,16 @@ public class TetrisWindow extends JFrame implements ActionListener, KeyListener 
 	public void actionPerformed(ActionEvent e) {
 		JButton jb=(JButton)e.getSource();
 		if (jb.getText().equals("게임시작")) {
+			initialize();
+			//자동낙하 스레드 생성하고 작동시킨다.
+			게임중=true;
+			playThread = new Thread((Runnable)this);
+			playThread.start();
+			
 			try {
 				this.removeKeyListener(this);
 			} catch (Exception e1) { }
+			
 			this.addKeyListener(this);
 			this.requestFocus();
 		}
@@ -295,7 +304,11 @@ public class TetrisWindow extends JFrame implements ActionListener, KeyListener 
 			this.requestFocus();
 		}
 		else if (jb.getText().equals("게임종료")) {
-			;
+			게임중=false;
+			while (playThread.isAlive()) {
+				playThread.interrupt();
+				
+			}
 		}
 	}
 
@@ -327,6 +340,13 @@ public class TetrisWindow extends JFrame implements ActionListener, KeyListener 
 			//모두 채워진 줄을 제거한다.
 			removeFullLines();
 			
+			게임중=isNotEnd((블록번호+1)%7);
+			if(게임중==false) {
+				JOptionPane.showMessageDialog(null, "게임 종료", "게임 종료", JOptionPane.INFORMATION_MESSAGE);
+				tb.repaint();
+				tb.revalidate();
+				return;
+			}
 			
 			//새로운 블록을 등장시킨다.
 			drawTetrisBoard(r.nextInt(7), 3, 0);
@@ -335,14 +355,49 @@ public class TetrisWindow extends JFrame implements ActionListener, KeyListener 
 		}
 	}
 	
-	@Override
 	public void keyReleased(KeyEvent arg0) {
 		
 	}
 	
-	@Override
 	public void keyTyped(KeyEvent arg0) {
 		
+	}
+	
+	public void run() {
+		while (게임중) {
+			try {
+				if(isBottom()) {
+					//바닥처리
+					recordInTetrisMap();
+					removeFullLines();
+					
+					//새로운 블록 등장하는 부분
+					게임중=isNotEnd((블록번호+1)%7);
+					if(게임중==false) {
+						JOptionPane.showMessageDialog(null, "게임 종료", "게임 종료", JOptionPane.INFORMATION_MESSAGE);
+					}
+					drawTetrisBoard(r.nextInt(7), 3, 0);
+				}
+				else {
+					//계속 낙하
+					moveTetrisBlock(0, 1);
+				}
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {	}
+		}
+	}
+
+	private boolean isNotEnd(int nextBlockNumber) {
+		int[][] 다음블록 = this.모든블록[nextBlockNumber].clone();
+		
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				if (다음블록[i][j]>0 && this.테트리스맵[현재블록최초위치y+i][현재블록최초위치x+j]>0) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 }

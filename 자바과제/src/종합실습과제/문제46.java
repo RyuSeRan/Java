@@ -1,12 +1,16 @@
 package 종합실습과제;
 
+import java.util.Scanner;
+
 public class 문제46 {
 
 	public static void main(String[] args) {
+		Scanner sc=new Scanner(System.in);
 		int a[]={0, 95, 100, 88, 65, 76, 89, 58, 93, 77, 99 };
 		int arr[][]=new int[2][11];
 		for (int i = 1; i < 11; i++) {
-			arr[0][i] = a[i];
+			//arr[0][i] = a[i];
+			arr[0][i]=sc.nextInt();
 			arr[1][i] = 1;
 		}
 		for (int i = 1; i < 11; i++) {
